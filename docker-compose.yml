@@ -1,0 +1,7 @@
+version: "3.9"
+services:
+  web:
+    container_name: AWS_Security_Scanner
+    build: .
+    ports:
+      - "8000:5000"

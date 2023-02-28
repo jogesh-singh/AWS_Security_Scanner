@@ -1,0 +1,141 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <style>
+    html {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      background: linear-gradient(#141e30, #243b55);
+    }
+
+
+    h2 {
+      margin: 25px 0 30px;
+      padding: 0;
+      font-size: 50px;
+      font-weight: lighter;
+      text-align: center;
+      color: rgb(165, 164, 190);
+
+    }
+
+
+
+    .loader {
+      -webkit-perspective: 700px;
+      perspective: 700px;
+      margin-left: 42%;
+      margin-top: 20%;
+    }
+
+    .loader>span {
+      font-size: 50px;
+      font-family: "franklin gothic medium", sans-serif;
+      display: inline-block;
+      animation: flip 2.6s infinite linear;
+      transform-origin: 0 70%;
+      transform-style: preserve-3d;
+      -webkit-transform-style: preserve-3d;
+    }
+
+    @keyframes flip {
+      35% {
+        transform: rotateX(360deg);
+      }
+
+      100% {
+        transform: rotatex(360deg);
+      }
+    }
+
+
+    .loader>span:nth-child(even) {
+      color: rgb(165, 164, 190);
+
+    }
+
+    .loader>span:nth-child(2) {
+      animation-delay: 0.3s;
+    }
+
+    .loader>span:nth-child(3) {
+      animation-delay: 0.6s;
+    }
+
+    .loader>span:nth-child(4) {
+      animation-delay: 0.9s;
+    }
+
+    .loader>span:nth-child(5) {
+      animation-delay: 1.2s;
+    }
+
+    .loader>span:nth-child(6) {
+      animation-delay: 1.5s
+    }
+
+    .loader>span:nth-child(7) {
+      animation-delay: 1.8s
+    }
+
+    .loader>span:nth-child(8) {
+      animation-delay: 2.0s
+    }
+  </style>
+
+  <title>Status Update</title>
+
+</head>
+
+<body>
+  <div class="loader">
+    <span>S</span>
+    <span>C</span>
+    <span>A</span>
+    <span>N</span>
+    <span>N</span>
+    <span>I</span>
+    <span>N</span>
+    <span>G</span>
+  </div>
+  <h2 id="innerStatus">0%</h2>
+</body>
+
+<script>
+  var timeout;
+
+  async function getStatus() {
+
+    let get;
+    
+    timeout = setTimeout(getStatus, 30000);
+    try {
+      const res = await fetch("/status");
+      get = await res.json();
+    } catch (e) {
+      console.error("Error: ", e);
+    }
+
+    document.getElementById("innerStatus").innerHTML = get.status + "&percnt;";
+
+    if (get.status == 100) {
+      document.getElementById("innerStatus").innerHTML += " Done.";
+      clearTimeout(timeout);
+      window.location.href = "/report";
+
+      return false
+    }
+
+  }
+
+  getStatus();
+</script>
+
+</html>

@@ -1,0 +1,366 @@
+<style>
+
+  html {
+      height: 100%;
+    }
+  
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      background: linear-gradient(#141e30, #243b55);
+    }
+  
+    h2 {
+      margin: 0 0 10px;
+      padding: 0;
+      padding-top: 1%;
+      color: #fff;
+      text-align: center;
+    }
+  
+    h3 {
+      margin: 0 0 10px;
+      padding: 0;
+      color: #fff;
+      text-align: center;
+    }
+    h4 {
+      margin: 0 0 20px;
+      padding: 0;
+      color: rgb(240, 224, 224);
+      text-align: center;
+    }
+  table{
+    width:100%;
+    table-layout: fixed;
+  }
+  .tbl-header{
+    background-color: #ea6153;
+   }
+  .tbl-content{
+    height:60%;
+    overflow-x:auto;
+    margin-top: 0px;
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+  th{
+    padding: 20px 15px;
+    text-align: left;
+    font-weight: 500;
+    font-size: 14px;
+    color: #fff;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  th:first-child {
+    width: 10%;
+  }
+  th:nth-child(2){
+    width: 20%;
+  }
+  th:nth-child(3){
+    width: 10%;
+  }
+  td{
+    padding: 15px;
+    text-align: left;
+    vertical-align:middle;
+    font-weight: 300;
+    font-size: 14px;
+    color: #fff;
+    border: solid 1px rgba(255,255,255,0.1);
+    text-align: center;
+  }
+  
+  td:first-child {
+    width: 10%;
+  }
+  td:nth-child(2){
+    width: 20%;
+  }
+  td:nth-child(3){
+    width: 10%;
+  }
+  /* demo styles */
+  
+  @import url(https://fonts.googleapis.com/css?family=Roboto:400,500,300,700);
+  body{
+    /* background: -webkit-linear-gradient(left, #25c481, #25b7c4); */
+    /* background: linear-gradient(to right, #25c481, #25b7c4); */
+    font-family: 'Roboto', sans-serif;
+  }
+  section{
+    margin: 50px;
+  }
+  
+  
+  
+  
+  
+  /* for custom scrollbar for webkit browser*/
+  
+  ::-webkit-scrollbar {
+      width: 6px;
+  } 
+  ::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+  } 
+  ::-webkit-scrollbar-thumb {
+      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+  }
+  
+  
+  form button {
+      position: relative;
+      display: inline-block;
+      padding: 10px 20px;
+      color: #03e9f4;
+      font-size: 16px;
+      text-decoration: none;
+      text-transform: uppercase;
+      overflow: hidden;
+      transition: .5s;
+      /* margin-top: 40px; */
+      letter-spacing: 4px
+    }
+  
+    button {
+      background: rgba(0, 0, 0, .5);
+      border: transparent;
+      margin: 0 0 30px;
+      padding: 0;
+      /* color: #fff; */
+      text-align: center;
+      left: 45%;
+      /* border-radius: 5px; */
+    }
+  
+    button span {
+      position: absolute;
+      display: block;
+    }
+  
+    button span:nth-child(1) {
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #03e9f4);
+      animation: btn-anim1 1s linear infinite;
+    }
+  
+    @keyframes btn-anim1 {
+      0% {
+        left: -100%;
+      }
+  
+      50%,
+      100% {
+        left: 100%;
+      }
+    }
+  
+    button span:nth-child(2) {
+      top: -100%;
+      right: 0;
+      width: 2px;
+      height: 100%;
+      background: linear-gradient(180deg, transparent, #03e9f4);
+      animation: btn-anim2 1s linear infinite;
+      animation-delay: .25s
+    }
+  
+    @keyframes btn-anim2 {
+      0% {
+        top: -100%;
+      }
+  
+      50%,
+      100% {
+        top: 100%;
+      }
+    }
+  
+    button span:nth-child(3) {
+      bottom: 0;
+      right: -100%;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(270deg, transparent, #03e9f4);
+      animation: btn-anim3 1s linear infinite;
+      animation-delay: .5s
+    }
+  
+    @keyframes btn-anim3 {
+      0% {
+        right: -100%;
+      }
+  
+      50%,
+      100% {
+        right: 100%;
+      }
+    }
+  
+    button span:nth-child(4) {
+      bottom: -100%;
+      left: 0;
+      width: 2px;
+      height: 100%;
+      background: linear-gradient(360deg, transparent, #03e9f4);
+      animation: btn-anim4 1s linear infinite;
+      animation-delay: .75s
+    }
+  
+    @keyframes btn-anim4 {
+      0% {
+        bottom: -100%;
+      }
+  
+      50%,
+      100% {
+        bottom: 100%;
+      }
+    }
+  
+  </style>
+  <title>AWS Security Scanner</title>
+  
+  <section>
+      <!--for demo wrap-->
+      <h2><u>AWS Security Scanner</u></h2>
+      <h3><br>Scan Completed!</h3>
+      <h4> NOTE: We're only showing the failed checks result.</h4>
+      <div class="tbl-header">
+        <table cellpadding="0" cellspacing="0" border="0">
+          <thead>
+            <tr>
+              <th>Service</th>
+              <th>Issue</th>
+              <th>Region</th>
+              <th>Resources</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+      <div class="tbl-content">
+        <table cellpadding="0" cellspacing="0" border="0">
+          <tbody>
+            {% for key, values in res.items() %}
+            {% if values == "Error" %}
+            <tr>
+              <td>{{ key }}</td>
+              <td>{{ values }}</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+            {% elif key == "IAM" %}
+              {% for k,v in values.items() %}
+                {% if k == "Support" %}
+                {% if v != "True" %}
+                <tr>
+                  <td>{{ key }}</td>
+                  <td>Support Role doesnt exist</td>
+                  <td>-</td>
+                  <td>-</td>
+                </tr>
+                {% endif %}
+                {% else %}
+                {% if v == "Error" %}
+            <tr>
+              <td>{{ key }}</td>
+              <td>{{ v }}</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+            {% else %}
+                {% for i,j in v.items() %}
+                  {% if j == False %}
+                  <tr>
+                    <td>{{ key }}</td>
+                    <td>{{ i }}</td>
+                    <td>-</td>
+                    <td>-</td>
+                  </tr>
+                  {% else %}
+                  <tr>
+                    <td>{{ key }}</td>
+                    <td>{{ i }}</td>
+                    <td>-</td>
+                    <td>{{ j }}</td>
+                  </tr>
+                  {% endif %}
+                {% endfor %}
+                {% endif %}
+              {% endif %}
+              {% endfor %}
+              {% elif key == "Cloudfront" or key == "S3" or key == "CLOUDTRAIL"  or key == "CONFIG" %}
+              {% for k,v in values.items() %}
+              {% if v|length != 0 %}
+              <tr>
+                <td>{{ key }}</td>
+                <td>{{ k }}</td>
+                <td>-</td>
+                <td>{{ v }}</td>
+              </tr>
+              {% endif %}
+              {% endfor %}
+              {% elif key == "KMS" %}
+              {% if values|length > 0 %}
+              <tr>
+                <td>{{ key }}</td>
+                <td>Key Rotation disabled</td>
+                <td>-</td>
+                <td>{{ values }}</td>
+              </tr>
+              {% endif %}
+  
+          {% else %}
+            {% for k,v in values.items() %}
+            {% if v == "Error" %}
+            <tr>
+              <td>{{ key }}</td>
+              <td>{{ v }}</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+            {% else %}
+                {% for i,j in v.items() %}
+                <tr>
+                  <td>{{ key }}</td>
+                  <td>{{ k }}</td>
+                  <td>{{ i }}</td>
+                  <td>{{ j }}</td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+            {% endfor %}
+          {% endif %}
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <div style="display: inline-block; width: 70%; margin-left: 28%;">
+      <form action="/report" method="post" style="float: left; ">
+      
+        <button type="submit">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          Download Report</button>
+          </form>
+          <form action="/" method="get" style="float: left; padding-left: 5%; ">
+                  <button type="submit">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            Start New  Scan </button>
+    </form> 
+    </div>
+
+    
+  
