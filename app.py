@@ -22,8 +22,6 @@ from KMS.cmk import cmk_rotate
 from json import loads,dumps
 import logging
 
-import logging
-
 logging.basicConfig(format='%(asctime)s [%(levelname)s]  %(message)s',level=logging.INFO)
 
 def scan_aws(aws_acceess_key,aws_secret_key,regions):
