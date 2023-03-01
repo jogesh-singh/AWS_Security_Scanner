@@ -1,1 +1,5 @@
 to_do
+__pycache__
+__pycache__/*
+.venv
+.venv/*
