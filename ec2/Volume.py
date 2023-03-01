@@ -1,7 +1,8 @@
 from boto3 import client
+import logging
 
 def encrypt_volume(aws_acceess_key,aws_secret_key,regions):
-    print("encrypt_volume called")
+    logging.info("encrypt_volume called")
     try:
         volumes={}
         for region in regions:
@@ -13,5 +14,5 @@ def encrypt_volume(aws_acceess_key,aws_secret_key,regions):
 
         return volumes
     except Exception as e:
-        print("Volume Error: ",e)
+        logging.error(f"Volume Error: {e}")
         return "Error Scanning Volumes"

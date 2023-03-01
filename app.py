@@ -20,6 +20,11 @@ from Cloudtrail.cloudtrail import cloud_trail
 from Config.aws_config import config
 from KMS.cmk import cmk_rotate
 from json import loads,dumps
+import logging
+
+import logging
+
+logging.basicConfig(format='%(asctime)s [%(levelname)s]  %(message)s',level=logging.INFO)
 
 def scan_aws(aws_acceess_key,aws_secret_key,regions):
     global file_name,result
@@ -40,10 +45,10 @@ def scan_aws(aws_acceess_key,aws_secret_key,regions):
     result["CLOUDTRAIL"]  = loads(cloud_trail(aws_acceess_key,aws_secret_key,regions,result["S3"]["Logging Disabled"]))
     result["CONFIG"]          = loads(config(aws_acceess_key,aws_secret_key,regions))
     result["KMS"]        = cmk_rotate(aws_acceess_key,aws_secret_key)
-    print("Scan Completed at ",datetime.now().strftime("%H:%M:%S"))
-    print('Generating Excel File')
+    logging.info(f"Scan Completed at {datetime.now().strftime('%H:%M:%S')}")
+    logging.info('Generating Excel File')
     file_name = generate_excel_file(result,aws_acceess_key,aws_secret_key)
-    print('Excel File Generated')
+    logging.info('Excel File Generated')
 
 
 
@@ -56,7 +61,7 @@ def index():
 @app.route('/scan',methods=['GET','POST'])
 def scan():
     if request.method == "POST":
-        print("Scan Started at ",datetime.now().strftime("%H:%M:%S"))
+        logging.info(f"Scan Started at {datetime.now().strftime('%H:%M:%S')}")
         access_key = request.form.get("Access_Key")
         secret_key = request.form.get("Secret_Key")
         regions = create_session(access_key,secret_key)
@@ -80,8 +85,10 @@ def frontend():
     global file_name,result
 
     if request.method == "POST":
-        print(request.form.get("Filename"))
-        return send_file(file_name)
+        if file_name == "Error":
+            return render_template("report.html",res=result,error="Generate PDF Failed")
+        else:
+            return send_file(file_name)
     return render_template('report.html',res=result)
 
 if __name__ == '__main__':

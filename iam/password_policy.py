@@ -1,7 +1,7 @@
-import boto3
+import boto3,logging
 
 def Password_Policy(aws_acceess_key,aws_secret_key):
-    print("Password_Policy called")
+    logging.info("Password_Policy called")
     iam = boto3.client('iam',aws_access_key_id=aws_acceess_key,aws_secret_access_key=aws_secret_key)
     password={}
 
@@ -31,5 +31,5 @@ def Password_Policy(aws_acceess_key,aws_secret_key):
         }
         return password
     except Exception as e:
-        print("IAM Password Error: ",e)
+        logging.error(f"IAM Password Error: {e}")
         return "Error Scanning IAM Password"

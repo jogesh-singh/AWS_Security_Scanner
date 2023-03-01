@@ -1,9 +1,10 @@
 from json import dumps
 from botocore.exceptions import ClientError
 from boto3 import client
+import logging
 
 def check_bucket(aws_acceess_key,aws_secret_key):
-    print("check_bucket called")
+    logging.info("check_bucket called")
     try:
         s3 = client('s3',aws_access_key_id=aws_acceess_key,aws_secret_access_key=aws_secret_key)
         s3_buckets = [buckets['Name'] for buckets in s3.list_buckets()["Buckets"]]
@@ -32,6 +33,6 @@ def check_bucket(aws_acceess_key,aws_secret_key):
                 pass
         return dumps({"Not encrypted":not_encrypted,"No Policy To Only Allow HTTPS Requests":no_https_policy,"Logging Disabled":logging_disabled})
     except Exception as e:
-        print("S3 Error: ",e)
+        logging.error(f"S3 Error: {e}")
         return "Error Scanning S3"       
 

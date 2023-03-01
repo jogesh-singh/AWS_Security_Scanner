@@ -1,8 +1,9 @@
 from json import dumps
 from boto3 import client
+import logging
 
 def cloud_trail(aws_acceess_key,aws_secret_key,regions,logging_disabled):
-    print("Cloudtrail called")
+    logging.info("Cloudtrail called")
     try:
         log_file_validation={}
         cloudwatch_logs={}
@@ -40,21 +41,26 @@ def cloud_trail(aws_acceess_key,aws_secret_key,regions,logging_disabled):
             "Cloudtrail bucket loggin disabled":logging_disabled_cloudtrail_buckets
         })
     except Exception as e:
-        print("Cloudtrail Error: ",e)
+        logging.error(f"Cloudtrail Error: {e}")
         return "Error Scanning Cloudtrail"
 
 def acl_check(aws_acceess_key,aws_secret_key,trail_buckets):
-    print("acl check called")
+    logging.info("acl check called")
     acl_list=[]
-    s3=client('s3',aws_access_key_id=aws_acceess_key,aws_secret_access_key=aws_secret_key)
-    for bucket in trail_buckets:
-        print(bucket)
-        try:
-            response=s3.get_bucket_acl(Bucket=bucket)
-            for grant in response["Grants"]:
-                if grant["Grantee"].get("URI"):
-                    if "AllUsers" in grant["Grantee"]["URI"] or "AuthenticatedUsers" in grant["Grantee"]["URI"]:
-                        acl_list.append(bucket)
-        except Exception as e:
-            print(e)
-    return acl_list
+    try:
+        s3=client('s3',aws_access_key_id=aws_acceess_key,aws_secret_access_key=aws_secret_key)
+        for bucket in trail_buckets:
+            print(bucket)
+            try:
+                response=s3.get_bucket_acl(Bucket=bucket)
+                for grant in response["Grants"]:
+                    if grant["Grantee"].get("URI"):
+                        if "AllUsers" in grant["Grantee"]["URI"] or "AuthenticatedUsers" in grant["Grantee"]["URI"]:
+                            acl_list.append(bucket)
+            except Exception as e:
+                logging.error(f"ACL Error: {e}")
+        return acl_list
+    except Exception as e:
+        logging.error(f"ACL Error: {e}")
+        return 
+    

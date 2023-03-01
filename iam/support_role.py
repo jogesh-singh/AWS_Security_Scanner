@@ -1,7 +1,8 @@
 import boto3
+import logging
 
 def support_role(aws_acceess_key,aws_secret_key):
-    print("support_role called")
+    logging.info("support_role called")
     try:
         support=False
         iam = boto3.client('iam',aws_access_key_id=aws_acceess_key,aws_secret_access_key=aws_secret_key)
@@ -12,5 +13,5 @@ def support_role(aws_acceess_key,aws_secret_key):
                 break
         return support
     except Exception as e:
-        print("IAM Support Error: ",e)
+        logging.error(f"IAM Support Error: {e}")
         return "Error Scanning IAM Support"

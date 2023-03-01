@@ -1,8 +1,9 @@
 from json import dumps
 from boto3 import client
+import logging
 
 def check_rds(aws_acceess_key,aws_secret_key,regions):
-    print("check_rds called")
+    logging.info("check_rds called")
     try: 
         Multi_AZ_disabled={}
         Delete_Protection_Disabled={}
@@ -29,7 +30,7 @@ def check_rds(aws_acceess_key,aws_secret_key,regions):
                 Enhanced_monitoring_disabled[region]=enhance_monitor
         return dumps({"Multi AZ disabled":Multi_AZ_disabled,"Delete Protection Disabled":Delete_Protection_Disabled,"Enhanced monitoring disabled":Enhanced_monitoring_disabled})
     except Exception as e:
-        print("RDS Error: ",e)
+        logging.error(f"RDS Error: {e}")
         return "Error Scanning RDS"
 
 

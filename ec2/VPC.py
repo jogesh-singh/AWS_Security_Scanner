@@ -1,7 +1,8 @@
 from json import dumps
 from boto3 import client
+import logging
 def vpc_flow(aws_acceess_key,aws_secret_key,regions):
-    print("vpc_flow called")
+    logging.info("vpc_flow called")
     try:
         vpc_list=cloudwatch_list={}
         for region in regions:
@@ -22,5 +23,5 @@ def vpc_flow(aws_acceess_key,aws_secret_key,regions):
                 vpc_list[region]=vpcs
         return dumps({"Flow logs disabled":vpc_list,"cloudwatch logs disabled":cloudwatch_list})
     except Exception as e:
-        print("VPC Error: ",e)
+        logging.error(f"VPC Error: {e}")
         return "Error Scanning VPC"

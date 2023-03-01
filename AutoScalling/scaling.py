@@ -1,7 +1,8 @@
 from boto3 import client
+import logging
 
 def auto_scale(aws_acceess_key,aws_secret_key,regions):
-    print("auto scale called")
+    logging.info("auto scale called")
     try:
         auto_scaling={}
         for region in regions:
@@ -13,5 +14,5 @@ def auto_scale(aws_acceess_key,aws_secret_key,regions):
                 auto_scaling[region]=scaling
         return auto_scaling
     except Exception as e:
-        print("AutoScale Error: ",e)
+        logging.error(f"AutoScale Error: {e}")
         return "Error Scanning AutoScale"

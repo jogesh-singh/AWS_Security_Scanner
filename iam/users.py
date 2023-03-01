@@ -1,8 +1,9 @@
 import datetime,time,json
 from boto3 import client
+import logging
 
 def users_detail(aws_acceess_key,aws_secret_key):
-    print("users_detail called")
+    logging.info("users_detail called")
     try:
         iam = client('iam',aws_access_key_id=aws_acceess_key,aws_secret_access_key=aws_secret_key)
 
@@ -50,5 +51,5 @@ def users_detail(aws_acceess_key,aws_secret_key):
 
         return result
     except Exception as e:
-        print("IAM Users Error: ",e)
+        logging.error(f"IAM Users Error: {e}")
         return "Error Scanning IAM Users"

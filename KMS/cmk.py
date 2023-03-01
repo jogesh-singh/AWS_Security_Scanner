@@ -1,8 +1,9 @@
 from json import dumps
 from boto3 import client
+import logging
 
 def cmk_rotate(aws_acceess_key,aws_secret_key):
-    print("kms called")
+    logging.info("kms called")
     try:
         kms=client('kms',region_name="us-west-2",aws_access_key_id=aws_acceess_key,aws_secret_access_key=aws_secret_key)
         response = kms.list_aliases()
@@ -15,5 +16,5 @@ def cmk_rotate(aws_acceess_key,aws_secret_key):
 
         return rotate_status
     except Exception as e:
-        print("KMS Error: ",e)
+        logging.error(f"KMS Error: {e}")
         return "Error Scanning KMS"

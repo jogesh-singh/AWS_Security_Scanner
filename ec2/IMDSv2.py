@@ -1,6 +1,6 @@
-import boto3
+import boto3,logging
 def imdsv2(aws_acceess_key,aws_secret_key,regions):
-    print("imdsv2 called")
+    logging.info("imdsv2 called")
     try:
         result={}
         for region in regions:
@@ -11,7 +11,7 @@ def imdsv2(aws_acceess_key,aws_secret_key,regions):
                 result[region] = v2
         return result
     except Exception as e:
-        print("EC2 IMDSv2 Error: ",e)
+        logging.error(f"EC2 IMDSv2 Error: {e}")
         return "Error Scanning EC2 IMDSv2"
 
 

@@ -1,8 +1,9 @@
 from json import dumps
 from boto3 import client
+import logging
 
 def lb(aws_acceess_key,aws_secret_key,regions):
-    print("lb called")
+    logging.info("lb called")
     try:
         lbs=cross_zone={}
         for region in regions:
@@ -31,5 +32,5 @@ def lb(aws_acceess_key,aws_secret_key,regions):
             # print(listners)
         return dumps({"Load balancers listening on port 80":lbs,"Cross Zone not enabled":cross_zone})
     except Exception as e:
-        print("Load balancer Error: ",e)
+        logging.error(f"Load balancer Error: {e}")
         return "Error Scanning Load Balancers"

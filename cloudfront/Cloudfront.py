@@ -1,8 +1,9 @@
 from json import dumps
 import boto3
+import logging
 
 def cloudfront_scan(aws_acceess_key,aws_secret_key):
-    print("Cloudfront scan called")
+    logging.info("Cloudfront scan called")
     result={}
     try:
         origin=[]
@@ -23,5 +24,5 @@ def cloudfront_scan(aws_acceess_key,aws_secret_key):
             result["Distributions without viewer policy set to https-only or redirect-to-https"]=viewer
         return result
     except Exception as e:
-        print("Cloudfront Error: ",e)
+        logging.error(f"Cloudfront Error: {e}")
         return "Error Scanning Cloudfront"

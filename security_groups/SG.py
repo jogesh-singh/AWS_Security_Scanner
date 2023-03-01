@@ -1,6 +1,7 @@
 from boto3 import client
+import logging
 def open_traffic(aws_acceess_key,aws_secret_key,regions):
-    print("open_traffic called")
+    logging.info("open_traffic called")
     try:
         security_groups={"all_traffic_open":{},"open_ports_22":{},"open_ports_23":{},"open_ports_3306":{}}
         for region in regions:
@@ -41,5 +42,5 @@ def open_traffic(aws_acceess_key,aws_secret_key,regions):
 
         return security_groups
     except Exception as e:
-        print("EC2 Security Groups Error: ",e)
+        logging.error(f"EC2 Security Groups Error: {e}")
         return "Error Scanning Security Groups"

@@ -1,8 +1,9 @@
 from boto3 import client
 from json import dumps
+import logging
 
 def config(aws_acceess_key,aws_secret_key,regions):
-    print("config called")
+    logging.info("config called")
     try:
         configs_disabed=[]
         for region in regions:
@@ -12,5 +13,5 @@ def config(aws_acceess_key,aws_secret_key,regions):
                 configs_disabed.append(region)
         return dumps({"Config_disabled":configs_disabed})
     except Exception as e:
-        print("Config Error: ",e)
+        logging.error("Config Error: ",e)
         return "Error Scanning Config"
