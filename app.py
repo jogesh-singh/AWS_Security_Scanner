@@ -20,6 +20,7 @@ from Cloudtrail.cloudtrail import cloud_trail
 from Config.aws_config import config
 from KMS.cmk import cmk_rotate
 from SNS.subscription import sub_check
+from ELBv2.load_balancer import lbv2
 from json import loads,dumps
 import logging
 
@@ -27,16 +28,18 @@ logging.basicConfig(format='%(asctime)s [%(levelname)s]  %(message)s',level=logg
 
 def scan_aws(aws_acceess_key,aws_secret_key,regions):
     global file_name,result
-    result={"IAM":{},"EC2":{}}
+    result={}
     result["Cloudfront"]                                = cloudfront_scan(aws_acceess_key,aws_secret_key)
     # Policy                                            = policies_attached_to_users(aws_acceess_key,aws_secret_key)
+    result["IAM"]={}
     result["IAM"]["Support"]                            = support_role(aws_acceess_key,aws_secret_key)
-    result["EC2"]["Instances With IMDSv2 Disabled"]     = imdsv2(aws_acceess_key,aws_secret_key,regions)
     result["IAM"]["Password"]                           = Password_Policy(aws_acceess_key,aws_secret_key)
+    result["IAM"]["Users"]                              = users_detail(aws_acceess_key,aws_secret_key)
     result["RDS"]                                       = loads(check_rds(aws_acceess_key,aws_secret_key,regions))
     result["S3"]                                        = loads(check_bucket(aws_acceess_key,aws_secret_key))
     result["SG"]                                        = open_traffic(aws_acceess_key,aws_secret_key,regions)
-    result["IAM"]["Users"]                              = users_detail(aws_acceess_key,aws_secret_key)
+    result["EC2"]={}
+    result["EC2"]["Instances With IMDSv2 Disabled"]     = imdsv2(aws_acceess_key,aws_secret_key,regions)
     result["EC2"]["Volumes Not Encrypted"]              = encrypt_volume(aws_acceess_key,aws_secret_key,regions)
     result["VPC"]                                       = loads(vpc_flow(aws_acceess_key,aws_secret_key,regions))
     result["ELBv1"]                                     = loads(lb(aws_acceess_key,aws_secret_key,regions))
@@ -45,6 +48,8 @@ def scan_aws(aws_acceess_key,aws_secret_key,regions):
     result["CONFIG"]                                    = loads(config(aws_acceess_key,aws_secret_key,regions))
     result["KMS"]                                       = cmk_rotate(aws_acceess_key,aws_secret_key)
     result["SNS"]                                       = sub_check(aws_acceess_key,aws_secret_key,regions)
+    result["ELBv2"]                                     = loads(lbv2(aws_acceess_key,aws_secret_key,regions))
+
 
     logging.info(f"Scan Completed at {datetime.now().strftime('%H:%M:%S')}")
     logging.info('Generating Excel File')
@@ -77,7 +82,7 @@ def scan():
 @app.route('/status', methods=['GET'])
 def getStatus():
     global result
-    status = int((len(result)/13)*100)
+    status = int((len(result)/14)*100)
     statusList = {'status':status}
     return dumps(statusList)
 
