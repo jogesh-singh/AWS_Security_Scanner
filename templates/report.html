@@ -379,21 +379,21 @@
           <td>{{ key }}</td>
           <td>{{ i }}</td>
           <td>-</td>
-          <td>{{ j }}</td>
+          <td>{% for items in j %}{{ items }} , {% endfor %}</td>
         </tr>
         {% endif %}
         {% endfor %}
         {% endif %}
         {% endif %}
         {% endfor %}
-        {% elif key == "Cloudfront" or key == "S3" or key == "CLOUDTRAIL" or key == "CONFIG" %}
+        {% elif key == "S3" or key == "CLOUDTRAIL" or key == "CONFIG" %}
         {% for k,v in values.items() %}
         {% if v|length != 0 %}
         <tr>
           <td>{{ key }}</td>
           <td>{{ k }}</td>
           <td>-</td>
-          <td>{{ v }}</td>
+          <td>{% for items in v %}{{ items }} , {% endfor %}</td>
         </tr>
         {% endif %}
         {% endfor %}
@@ -403,7 +403,7 @@
           <td>{{ key }}</td>
           <td>Key Rotation disabled</td>
           <td>-</td>
-          <td>{{ values }}</td>
+          <td>{% for items in values %}{{ items }} , {% endfor %}</td>
         </tr>
         {% endif %}
 
@@ -422,7 +422,7 @@
           <td>{{ key }}</td>
           <td>{{ k }}</td>
           <td>{{ i }}</td>
-          <td>{{ j }}</td>
+          <td>{% for items in j %}{{ items }} , {% endfor %}</td>
         </tr>
         {% endfor %}
         {% endif %}
