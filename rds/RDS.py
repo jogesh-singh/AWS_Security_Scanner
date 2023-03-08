@@ -4,10 +4,8 @@ import logging
 
 def check_rds(aws_acceess_key,aws_secret_key,regions):
     logging.info("check_rds called")
+    result=[]
     try: 
-        Multi_AZ_disabled={}
-        Delete_Protection_Disabled={}
-        Enhanced_monitoring_disabled={}
         for region in regions:
             multi_az=[]
             delete_protect=[]
@@ -21,16 +19,16 @@ def check_rds(aws_acceess_key,aws_secret_key,regions):
                     delete_protect.append(DB["DBInstanceIdentifier"])
                 if not DB.get("EnhancedMonitoringResourceArn"):
                     enhance_monitor.append(DB["DBInstanceIdentifier"])
-
             if multi_az:
-                Multi_AZ_disabled[region]=multi_az
+                result.append({"Service":"RDS","Issue":"Multi AZ disabled","Region":region,"Resources":multi_az})
             if delete_protect:
-                Delete_Protection_Disabled[region]=delete_protect
+                result.append({"Service":"RDS","Issue":"Delete Protection Disabled","Region":region,"Resources":delete_protect})
             if enhance_monitor:
-                Enhanced_monitoring_disabled[region]=enhance_monitor
-        return dumps({"Multi AZ disabled":Multi_AZ_disabled,"Delete Protection Disabled":Delete_Protection_Disabled,"Enhanced monitoring disabled":Enhanced_monitoring_disabled})
+                result.append({"Service":"RDS","Issue":"Enhanced monitoring disabled","Region":region,"Resources":enhance_monitor})
+        return result
     except Exception as e:
         logging.error(f"RDS Error: {e}")
-        return "Error Scanning RDS"
+        result=[{"Service":"RDS","Error":e}]
+        return result 
 
 

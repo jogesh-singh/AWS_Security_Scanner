@@ -5,7 +5,7 @@ import logging
 def lbv2(aws_acceess_key,aws_secret_key,regions):
     logging.info("lbv2 called")
     try:
-        access_log={}
+        result=[]
         for region in regions:
             response = client('elbv2', region_name=region,aws_access_key_id=aws_acceess_key,aws_secret_access_key=aws_secret_key)
             elb = response.describe_load_balancers()
@@ -18,10 +18,10 @@ def lbv2(aws_acceess_key,aws_secret_key,regions):
                 for attri in elb["Attributes"]:
                     if attri["Key"]=="access_logs.s3.enabled" and attri["Value"] == "false":
                         access.append(name)
-
             if access:
-                access_log[region]=access
-        return dumps({"Access logs not enabled":access_log})
+                result.append({"Service":"ELBv2","Issue":"Access logs not enabled","Region":region,"Resources":access})
+        return result
     except Exception as e:
         logging.error(f"Load balancer Error: {e}")
-        return "Error Scanning Load Balancers"
+        result=[{"Service":"ELBv2","Error":e}]
+        return result

@@ -11,7 +11,12 @@ def support_role(aws_acceess_key,aws_secret_key):
             if role["Path"] == "/aws-service-role/support.amazonaws.com/":
                 support=True
                 break
-        return support
+        if support == False:
+            result = [{"Service":"IAM","Issue":"Support Rule Doesn't exist","Region":"Global","Resources":"-"}]
+        else:
+            result=[]
+        return result
     except Exception as e:
         logging.error(f"IAM Support Error: {e}")
-        return "Error Scanning IAM Support"
+        result=[{"Service":"IAM","Error":e}]
+        return result

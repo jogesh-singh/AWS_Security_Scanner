@@ -13,8 +13,9 @@ def cmk_rotate(aws_acceess_key,aws_secret_key):
             response = kms.get_key_rotation_status(KeyId=key)
             if response["KeyRotationEnabled"] == False:
                 rotate_status.append(key)
-
-        return rotate_status
+        result=[{"Service":"KMS","Issue":"Keys not Rotated","Region":"Global","Resources":rotate_status}]
+        return result
     except Exception as e:
         logging.error(f"KMS Error: {e}")
-        return "Error Scanning KMS"
+        result=[{"Service":"KMS","Error":e}]
+        return result

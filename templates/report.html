@@ -338,95 +338,22 @@
   <div class="tbl-content">
     <table cellpadding="0" cellspacing="0" border="0">
       <tbody>
-        {% for key, values in res.items() %}
-        {% if values == "Error" %}
+        {% for issues in res %}
+        {% if issues|length == 2 %}
         <tr>
-          <td>{{ key }}</td>
-          <td>{{ values }}</td>
-          <td>-</td>
-          <td>-</td>
-        </tr>
-        {% elif key == "IAM" %}
-        {% for k,v in values.items() %}
-        {% if k == "Support" %}
-        {% if v != "True" %}
-        <tr>
-          <td>{{ key }}</td>
-          <td>Support Role doesnt exist</td>
-          <td>-</td>
-          <td>-</td>
-        </tr>
-        {% endif %}
-        {% else %}
-        {% if v == "Error" %}
-        <tr>
-          <td>{{ key }}</td>
-          <td>{{ v }}</td>
-          <td>-</td>
-          <td>-</td>
-        </tr>
-        {% else %}
-        {% for i,j in v.items() %}
-        {% if j == False %}
-        <tr>
-          <td>{{ key }}</td>
-          <td>{{ i }}</td>
-          <td>-</td>
-          <td>-</td>
+          <td>{{ issues["Service"] }}</td>
+          <td colspan="3">{{ issues["Error"] }}</td>
         </tr>
         {% else %}
         <tr>
-          <td>{{ key }}</td>
-          <td>{{ i }}</td>
-          <td>-</td>
-          <td>{% for items in j %}{{ items }} , {% endfor %}</td>
+        {% for value in issues.values() %}
+          {% if value.__class__.__name__ == 'list' %}
+          <td>{{ value|join(', ') }}</td>
+          {% else %}
+          <td>{{ value }}</td>
+          {% endif %}
+          {% endfor %}
         </tr>
-        {% endif %}
-        {% endfor %}
-        {% endif %}
-        {% endif %}
-        {% endfor %}
-        {% elif key == "S3" or key == "CLOUDTRAIL" or key == "CONFIG" %}
-        {% for k,v in values.items() %}
-        {% if v|length != 0 %}
-        <tr>
-          <td>{{ key }}</td>
-          <td>{{ k }}</td>
-          <td>-</td>
-          <td>{% for items in v %}{{ items }} , {% endfor %}</td>
-        </tr>
-        {% endif %}
-        {% endfor %}
-        {% elif key == "KMS" %}
-        {% if values|length > 0 %}
-        <tr>
-          <td>{{ key }}</td>
-          <td>Key Rotation disabled</td>
-          <td>-</td>
-          <td>{% for items in values %}{{ items }} , {% endfor %}</td>
-        </tr>
-        {% endif %}
-
-        {% else %}
-        {% for k,v in values.items() %}
-        {% if v == "Error" %}
-        <tr>
-          <td>{{ key }}</td>
-          <td>{{ v }}</td>
-          <td>-</td>
-          <td>-</td>
-        </tr>
-        {% else %}
-        {% for i,j in v.items() %}
-        <tr>
-          <td>{{ key }}</td>
-          <td>{{ k }}</td>
-          <td>{{ i }}</td>
-          <td>{% for items in j %}{{ items }} , {% endfor %}</td>
-        </tr>
-        {% endfor %}
-        {% endif %}
-        {% endfor %}
         {% endif %}
         {% endfor %}
       </tbody>

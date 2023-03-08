@@ -5,12 +5,10 @@ import logging
 def cloud_trail(aws_acceess_key,aws_secret_key,regions,logging_disabled):
     logging.info("Cloudtrail called")
     try:
-        log_file_validation={}
-        cloudwatch_logs={}
-        encryption={}
-        s3_buckets=[]
+        result=[]
         trails_disabed=[]
         for region in regions:
+            s3_buckets=[]
             response = client('cloudtrail', region_name=region,aws_access_key_id=aws_acceess_key,aws_secret_access_key=aws_secret_key)
             trails = response.describe_trails()
             if not trails["trailList"]:
@@ -21,28 +19,29 @@ def cloud_trail(aws_acceess_key,aws_secret_key,regions,logging_disabled):
                 cloudwatch=[trail["Name"] for trail in trails["trailList"] if not trail.get("CloudWatchLogsRoleArn")]
                 encrypt=[trail["Name"] for trail in trails["trailList"] if not trail.get("KmsKeyId")]
                 if validation:
-                    log_file_validation[region] = validation
+                    result.append({"Service":"CLOUDTRAIL","Issue":"Log file validation Disbaled","Region":region,"Resources":validation})
                 if cloudwatch:
-                    cloudwatch_logs[region] = cloudwatch
+                    result.append({"Service":"CLOUDTRAIL","Issue":"Cloudwatch logs Disabled","Region":region,"Resources":cloudwatch})
                 if encrypt:
-                	encryption[region]=encrypt
-        if s3_buckets:
-            ACL = acl_check(aws_acceess_key,aws_secret_key,s3_buckets)
-            logging_disabled_cloudtrail_buckets=[bucket for bucket in s3_buckets if bucket in logging_disabled]
-        else:
-            logging_disabled_cloudtrail_buckets={}
-            ACL         = {}
-        return dumps({
-            "Trails_disabled":trails_disabed,
-            "Encryption Disabled":encryption,
-            "Log file validation Disbaled":log_file_validation,
-            "Cloudwatch logs Disabled":cloudwatch_logs,
-            "ACL" :ACL,
-            "Cloudtrail bucket loggin disabled":logging_disabled_cloudtrail_buckets
-        })
+                    result.append({"Service":"CLOUDTRAIL","Issue":"Encryption Disabled","Region":region,"Resources":encrypt})
+                if s3_buckets:
+                    ACL = acl_check(aws_acceess_key,aws_secret_key,s3_buckets)
+                    logging_disabled_cloudtrail_buckets=[bucket for bucket in s3_buckets if bucket in logging_disabled]
+
+                if logging_disabled_cloudtrail_buckets:
+                    result.append({"Service":"CLOUDTRAIL","Issue":"Cloudtrail bucket loggin disabled","Region":region,"Resources":logging_disabled_cloudtrail_buckets})
+
+                if ACL:
+                    result.append({"Service":"CLOUDTRAIL","Issue":"ACL","Region":region,"Resources":ACL})
+        if trails_disabed:
+            result.append({"Service":"CLOUDTRAIL","Issue":"Trails_disabled","Region":"-","Resources":trails_disabed})
+
+
+        return result
     except Exception as e:
         logging.error(f"Cloudtrail Error: {e}")
-        return "Error Scanning Cloudtrail"
+        result=[{"Service":"CLOUDTRAIL","Error":e}]
+        return result
 
 def acl_check(aws_acceess_key,aws_secret_key,trail_buckets):
     logging.info("acl check called")
@@ -50,7 +49,6 @@ def acl_check(aws_acceess_key,aws_secret_key,trail_buckets):
     try:
         s3=client('s3',aws_access_key_id=aws_acceess_key,aws_secret_access_key=aws_secret_key)
         for bucket in trail_buckets:
-            print(bucket)
             try:
                 response=s3.get_bucket_acl(Bucket=bucket)
                 for grant in response["Grants"]:
@@ -62,5 +60,5 @@ def acl_check(aws_acceess_key,aws_secret_key,trail_buckets):
         return acl_list
     except Exception as e:
         logging.error(f"ACL Error: {e}")
-        return 
+        return acl_list
     

@@ -27,29 +27,46 @@ import logging
 logging.basicConfig(format='%(asctime)s [%(levelname)s]  %(message)s',level=logging.INFO)
 
 def scan_aws(aws_acceess_key,aws_secret_key,regions):
-    global file_name,result
-    result={}
+    global file_name,result,count
+    result=[]
+    count=0
+    result.extend(support_role(aws_acceess_key,aws_secret_key))
+    count+=1
+    result.extend(Password_Policy(aws_acceess_key,aws_secret_key))
+    count+=1
+    result.extend(users_detail(aws_acceess_key,aws_secret_key))
+    count+=1
+    result.extend(cloudfront_scan(aws_acceess_key,aws_secret_key))
+    count+=1
+    s3_result=loads(check_bucket(aws_acceess_key,aws_secret_key))
+    result.extend(s3_result["Result"])    
+    count+=1
     # Policy                                            = policies_attached_to_users(aws_acceess_key,aws_secret_key)
-    result["IAM"]={}
-    result["IAM"]["Support"]                            = support_role(aws_acceess_key,aws_secret_key)
-    result["IAM"]["Password"]                           = Password_Policy(aws_acceess_key,aws_secret_key)
-    result["IAM"]["Users"]                              = users_detail(aws_acceess_key,aws_secret_key)
-    result["Cloudfront"]                                = cloudfront_scan(aws_acceess_key,aws_secret_key)
-    result["S3"]                                        = loads(check_bucket(aws_acceess_key,aws_secret_key))
-    result["RDS"]                                       = loads(check_rds(aws_acceess_key,aws_secret_key,regions))
-    result["SG"]                                        = open_traffic(aws_acceess_key,aws_secret_key,regions)
-    result["EC2"]={}
-    result["EC2"]["Instances With IMDSv2 Disabled"]     = imdsv2(aws_acceess_key,aws_secret_key,regions)
-    result["EC2"]["Volumes Not Encrypted"]              = encrypt_volume(aws_acceess_key,aws_secret_key,regions)
-    result["VPC"]                                       = loads(vpc_flow(aws_acceess_key,aws_secret_key,regions))
-    result["ELBv1"]                                     = loads(lb(aws_acceess_key,aws_secret_key,regions))
-    result["ELBv2"]                                     = loads(lbv2(aws_acceess_key,aws_secret_key,regions))
-    result["AUTO_SCALING"]                              = auto_scale(aws_acceess_key,aws_secret_key,regions)
-    result["CLOUDTRAIL"]                                = loads(cloud_trail(aws_acceess_key,aws_secret_key,regions,result["S3"]["Logging Disabled"]))
-    result["CONFIG"]                                    = loads(config(aws_acceess_key,aws_secret_key,regions))
-    result["KMS"]                                       = cmk_rotate(aws_acceess_key,aws_secret_key)
-    result["SNS"]                                       = sub_check(aws_acceess_key,aws_secret_key,regions)
-
+    result.extend(cmk_rotate(aws_acceess_key,aws_secret_key))
+    count+=1
+    result.extend(check_rds(aws_acceess_key,aws_secret_key,regions))
+    count+=1
+    result.extend(open_traffic(aws_acceess_key,aws_secret_key,regions))
+    count+=1
+    result.extend(imdsv2(aws_acceess_key,aws_secret_key,regions))
+    count+=1
+    result.extend(encrypt_volume(aws_acceess_key,aws_secret_key,regions))
+    count+=1
+    result.extend(vpc_flow(aws_acceess_key,aws_secret_key,regions))
+    count+=1
+    result.extend(lb(aws_acceess_key,aws_secret_key,regions))
+    count+=1
+    result.extend(lbv2(aws_acceess_key,aws_secret_key,regions))
+    count+=1
+    result.extend(auto_scale(aws_acceess_key,aws_secret_key,regions))
+    count+=1
+    result.extend(cloud_trail(aws_acceess_key,aws_secret_key,regions,s3_result["Logging Disabled"]))
+    count+=1
+    result.extend(config(aws_acceess_key,aws_secret_key,regions))
+    count+=1
+    result.extend(sub_check(aws_acceess_key,aws_secret_key,regions))
+    count+=1
+    # logging.info(result)
 
     logging.info(f"Scan Completed at {datetime.now().strftime('%H:%M:%S')}")
     logging.info('Generating Excel File')
@@ -81,8 +98,8 @@ def scan():
 
 @app.route('/status', methods=['GET'])
 def getStatus():
-    global result
-    status = int((len(result)/14)*100)
+    global count
+    status = int((count/17)*100)
     statusList = {'status':status}
     return dumps(statusList)
 

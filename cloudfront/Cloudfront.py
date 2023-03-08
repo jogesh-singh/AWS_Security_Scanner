@@ -4,7 +4,7 @@ import logging
 
 def cloudfront_scan(aws_acceess_key,aws_secret_key):
     logging.info("Cloudfront scan called")
-    result={}
+    result=[]
     try:
         origin=[]
         viewer=[]
@@ -28,15 +28,15 @@ def cloudfront_scan(aws_acceess_key,aws_secret_key):
                 access.append(id)
 
         if origin:
-            result["Distributions without origin policy set to https-only"]={}
-            result["Distributions without origin policy set to https-only"]["Global"]=origin
+            result.append({"Service":"CLOUDFRONT","Issue":"Distributions without origin policy set to https-only","Region":"Global","Resources":origin})
+
         if access:
-            result["Access logging disabled"]={}
-            result["Access logging disabled"]["Global"]=access
+            result.append({"Service":"CLOUDFRONT","Issue":"Access logging disabled","Region":"Global","Resources":access})
+
         if viewer:
-            result["Distributions without viewer policy set to https-only or redirect-to-https"]={}
-            result["Distributions without viewer policy set to https-only or redirect-to-https"]['Global']=viewer
+            result.append({"Service":"CLOUDFRONT","Issue":"Distributions without viewer policy set to https-only or redirect-to-https","Region":"Global","Resources":viewer})
         return result
     except Exception as e:
         logging.error(f"Cloudfront Error: {e}")
-        return "Error Scanning Cloudfront"
+        result=[{"Service":"CLOUDFRONT","Error":e}]
+        return result

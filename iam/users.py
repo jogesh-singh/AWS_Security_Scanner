@@ -21,14 +21,14 @@ def users_detail(aws_acceess_key,aws_secret_key):
             count+=1
             report_json[count]=dict(zip(headers,i))
 
-        result={}
+        result=[]
         #IAM root user should not be used
         if report_json[1]["access_key_1_active"] == "true" or report_json[1]["access_key_2_active"] == "true":
-            result["Root user actvity is present"]=False
+            result.append({"Service":"IAM","Issue":"Root Users keys are active","Region":"Global","Resources":"-"})
 
         # #IAM root user MFA not active
         if report_json[1]["mfa_active"] == "true":
-            result["Root Users MFA not Enabled"]=False
+            result.append({"Service":"IAM","Issue":"Root Users MFA not Enabled","Region":"Global","Resources":"-"})
 
         password_age=[]
         today = datetime.datetime.today().date()    
@@ -40,16 +40,18 @@ def users_detail(aws_acceess_key,aws_secret_key):
                     password_age.append(report_json[i]["b'user"])
 
         if password_age:
-            result["User with password age more than 90 days"]=password_age
+            result.append({"Service":"IAM","Issue":"User with password age more than 90 days","Region":"Global","Resources":password_age})
 
         users_mfa=[report_json[i]["b'user"] for i in report_json if report_json[i]["password_enabled"] == "true" if report_json[i]["mfa_active"] != "true" ]
         if users_mfa:
-            result["Users with mfa not enabled"]=users_mfa
+            result.append({"Service":"IAM","Issue":"Users with mfa not enabled","Region":"Global","Resources":users_mfa})
+
         both_keys_active=[report_json[i]["b'user"] for i in report_json if report_json[i]["access_key_1_active"] == "true" and report_json[i]["access_key_2_active"] == "true" ]
         if both_keys_active:
-            result["Users with both keys active"]=both_keys_active
+            result.append({"Service":"IAM","Issue":"Users with both keys active","Region":"Global","Resources":both_keys_active})
 
         return result
     except Exception as e:
         logging.error(f"IAM Users Error: {e}")
-        return "Error Scanning IAM Users"
+        result=[{"Service":"IAM","Error":e}]
+        return result

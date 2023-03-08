@@ -3,33 +3,32 @@ import boto3,logging
 def Password_Policy(aws_acceess_key,aws_secret_key):
     logging.info("Password_Policy called")
     iam = boto3.client('iam',aws_access_key_id=aws_acceess_key,aws_secret_access_key=aws_secret_key)
-    password={}
+    result=[]
 
     try:
         response = iam.get_account_password_policy()
         if response["PasswordPolicy"]["MinimumPasswordLength"] < 14:
-            password["Password length policy is less than 14 "]=False
+            result.append({"Service":"IAM","Issue":"Password length policy is less than 14","Region":"Global","Resources":"-"})
         if response["PasswordPolicy"]["PasswordReusePrevention"] < 24:
-            password["Password Reuse policy is less than 24 "] = False
+            result.append({"Service":"IAM","Issue":"Password Reuse policy is less than 24","Region":"Global","Resources":"-"})
         if response["PasswordPolicy"]["RequireSymbols"] != True:
-            password["Symbols are not required in password policy"] = False
+            result.append({"Service":"IAM","Issue":"Password policy doesn't have symbols","Region":"Global","Resources":"-"})
         if response["PasswordPolicy"]["RequireNumbers"] != True:
-            password["Numbers are not required on password policy"] = False
+            result.append({"Service":"IAM","Issue":"Password policy doesn't have numbers","Region":"Global","Resources":"-"})
         if response["PasswordPolicy"]["RequireUppercaseCharacters"] != True:
-            password["Uppercase characters are not required in password policy"] = False
+            result.append({"Service":"IAM","Issue":"Password policy doesn't have Uppercase character","Region":"Global","Resources":"-"})
         if response["PasswordPolicy"]["RequireLowercaseCharacters"] != True:
-            password["Lowercase letters are not required in passowrd policy"] = False
+            result.append({"Service":"IAM","Issue":"Password policy doesn't have Lowercase character","Region":"Global","Resources":"-"})
         if response["PasswordPolicy"]["ExpirePasswords"] != True:
-            password["Password expiration policy is not enabled"] = False
+            result.append({"Service":"IAM","Issue":"Password expiration policy is not enabled","Region":"Global","Resources":"-"})
         else:
             if response["PasswordPolicy"]["MaxPasswordAge"] > 90:
-                password["Password age policy is greater than 90 days"] = False
-        return password
+                result.append({"Service":"IAM","Issue":"Password age policy is greater than 90 days","Region":"Global","Resources":"-"})
+        return result
     except iam.exceptions.NoSuchEntityException:
-        password={
-            "No Custom Password Policy Used":False
-        }
-        return password
+        result.append({"Service":"IAM","Issue":"No custom password policy","Region":"Global","Resources":"-"})
+        return result
     except Exception as e:
         logging.error(f"IAM Password Error: {e}")
-        return "Error Scanning IAM Password"
+        result=[{"Service":"IAM","Error":e}]
+        return result

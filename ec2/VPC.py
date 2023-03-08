@@ -4,11 +4,12 @@ import logging
 def vpc_flow(aws_acceess_key,aws_secret_key,regions):
     logging.info("vpc_flow called")
     try:
-        vpc_list=cloudwatch_list={}
+        result=[]
         for region in regions:
             response = client('ec2', region_name=region,aws_access_key_id=aws_acceess_key,aws_secret_access_key=aws_secret_key)
             vpc_ids= [vpc["VpcId"] for vpc in response.describe_vpcs()['Vpcs'] ]
-            vpcs=cloudwatch=[]
+            vpcs=[]
+            cloudwatch=[]
             for id in vpc_ids:
                 flow_list = response.describe_flow_logs(Filters=[{"Name":"resource-id","Values":[id]}])
                 if not flow_list["FlowLogs"]:
@@ -17,11 +18,13 @@ def vpc_flow(aws_acceess_key,aws_secret_key,regions):
                     for flow in flow_list["FlowLogs"]:
                         if flow["LogDestinationType"] != "cloud-watch-logs":
                             cloudwatch.append(id)
-            if cloudwatch:
-                cloudwatch_list[region]=cloudwatch
             if vpcs:
-                vpc_list[region]=vpcs
-        return dumps({"Flow logs disabled":vpc_list,"cloudwatch logs disabled":cloudwatch_list})
+                result.append({"Service":"VPC","Issue":"Flow logs disabled","Region":region,"Resources":vpcs})
+            if cloudwatch:
+                result.append({"Service":"VPC","Issue":"Cloudwatch logs disabled","Region":region,"Resources":cloudwatch})
+
+        return result
     except Exception as e:
         logging.error(f"VPC Error: {e}")
-        return "Error Scanning VPC"
+        result=[{"Service":"VPC","Error":e}]
+        return result
